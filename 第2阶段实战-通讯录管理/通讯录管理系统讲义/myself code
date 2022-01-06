@@ -1,0 +1,252 @@
+#include <iostream>
+
+const int MAX_CONTACT = 1000;
+using namespace std;
+
+/**
+ * show main menu
+ */
+void showMenu() {
+    cout << "***************************" << endl;
+    cout << "*****  1、添加联系人  *****" << endl;
+    cout << "*****  2、显示联系人  *****" << endl;
+    cout << "*****  3、删除联系人  *****" << endl;
+    cout << "*****  4、查找联系人  *****" << endl;
+    cout << "*****  5、修改联系人  *****" << endl;
+    cout << "*****  6、清空联系人  *****" << endl;
+    cout << "*****  0、退出通讯录  *****" << endl;
+    cout << "***************************" << endl;
+}
+
+// 设计联系人结构体
+struct ContactPerson {
+
+    string name;
+
+    int sex;
+
+    string tel;
+
+    string addr;
+};
+
+// 通讯录结构体
+struct ContactBooks {
+
+    ContactPerson personArr[MAX_CONTACT];
+
+    int size = 0;
+};
+
+/**
+ * 添加联系人
+ * @param cb
+ */
+void addContact(ContactBooks *cb);
+
+/**
+ * 显示联系人
+ * @param pBooks
+ */
+void showContactPerson(ContactBooks *pBooks);
+
+/**
+ * 删除指定的联系人
+ * @param pBooks
+ */
+void deleteContact(ContactBooks *pBooks);
+
+/**
+ * 查询指定联系人的索引
+ * @param pBooks
+ * @param basicString
+ * @return
+ */
+int findIndexByName(ContactBooks *pBooks, string basicString);
+
+/**
+ * 查询联系人
+ * @param pBooks
+ */
+void selectContact(ContactBooks *pBooks);
+
+/**
+ * 修改联系人
+ * @param pBooks
+ */
+void editContact(ContactBooks *pBooks);
+
+int main() {
+    ContactBooks cb;
+    int select = 0;
+    while (true) {
+        showMenu();
+        cin >> select;
+        switch (select) {
+            case 1: //1、添加联系人
+                addContact(&cb);
+                break;
+            case 2: //2、显示联系人
+                showContactPerson(&cb);
+                system("pause");
+                break;
+            case 3: //3、删除联系人
+                deleteContact(&cb);
+                break;
+            case 4: //4、查找联系人
+                selectContact(&cb);
+                break;
+            case 5: //5、修改联系人
+                editContact(&cb);
+                break;
+            case 6: //6、清空联系人
+                cb.size = 0;
+                cout << "联系人清空成功" << endl;
+                system("pause");
+                break;
+            case 0:
+                system("pause");
+                return 0;
+        }
+
+    }
+    return 0;
+}
+
+void editContact(ContactBooks *cb) {
+    if (cb->size <= 0) {
+        cout << "联系人为空" << endl;
+        return;
+    }
+    cout << "请输入修改的联系人：" << endl;
+    string name;
+    cin >> name;
+    int index = findIndexByName(cb, name);
+    if (index < 0) {
+        cout << "联系人不存在" << endl;
+        return;
+    }
+    cout << "请输入姓名：" << endl;
+    cin >> name;
+    cb->personArr[index].name = name;
+    cout << "请输入性别：" << endl;
+    cout << "1，男" << endl;
+    cout << "2，女：" << endl;
+    int sex;
+    while (true) {
+        cin >> sex;
+        if (sex == 1 || sex == 2) {
+            cb->personArr[index].sex = sex;
+            break;
+        }
+        cout << "输入有误，请重新输入：" << endl;
+    }
+    cout << "请输入电话：" << endl;
+    string tel;
+    cin >> tel;
+    cb->personArr[index].tel = tel;
+    cout << "请输入住址：" << endl;
+    string addr;
+    cin >> addr;
+    cb->personArr[index].addr = addr;
+    cout << "修改成功" << endl;
+    system("pause");
+}
+
+void selectContact(ContactBooks *cb) {
+    if (cb->size <= 0) {
+        cout << "联系人为空" << endl;
+        return;
+    }
+    cout << "请输入的联系人：" << endl;
+    string name;
+    cin >> name;
+    int index = findIndexByName(cb, name);
+    if (index < 0) {
+        cout << "联系人不存在" << endl;
+        return;
+    }
+    cout << "名字：" << cb->personArr[index].name << "\t";
+    cout << "性别：" << (cb->personArr[index].sex == 1 ? "男" : "女") << "\t";
+    cout << "电话：" << cb->personArr[index].tel << "\t";
+    cout << "地址：" << cb->personArr[index].addr << endl;
+    system("pause");
+}
+
+void deleteContact(ContactBooks *cb) {
+    if (cb->size <= 0) {
+        cout << "联系人为空" << endl;
+        return;
+    }
+    cout << "请输入需要删除的的联系人：" << endl;
+    string name;
+    cin >> name;
+    int index = findIndexByName(cb, name);
+    if (index < 0) {
+        cout << "联系人不存在" << endl;
+        return;
+    }
+    for (int i = index; i < cb->size; ++i) {
+        cb->personArr[i] = cb->personArr[i + 1];
+    }
+    cout << "删除成功" << endl;
+    cb->size--;
+    system("pause");
+}
+
+int findIndexByName(ContactBooks *cb, string name) {
+    for (int i = 0; i < cb->size; ++i) {
+        if (name == cb->personArr[i].name) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void showContactPerson(ContactBooks *cb) {
+
+    if (cb->size <= 0) {
+        cout << "联系人为空" << endl;
+        return;
+    }
+    for (int i = 0; i < cb->size; ++i) {
+        cout << "名字：" << cb->personArr[i].name << "\t";
+        cout << "性别：" << (cb->personArr[i].sex == 1 ? "男" : "女") << "\t";
+        cout << "电话：" << cb->personArr[i].tel << "\t";
+        cout << "地址：" << cb->personArr[i].addr << endl;
+    }
+}
+
+void addContact(ContactBooks *cb) {
+    if (cb->size >= MAX_CONTACT) {
+        cout << "电话薄已满" << endl;
+        return;
+    }
+    cout << "请输入姓名：" << endl;
+    string name;
+    cin >> name;
+    cb->personArr[cb->size].name = name;
+    cout << "请输入性别：" << endl;
+    cout << "1-----男" << endl;
+    cout << "2-----女：" << endl;
+    int sex;
+    while (true) {
+        cin >> sex;
+        if (sex == 1 || sex == 2) {
+            cb->personArr[cb->size].sex = sex;
+            break;
+        }
+        cout << "输入有误，请重新输入：" << endl;
+    }
+    cout << "请输入电话：" << endl;
+    string tel;
+    cin >> tel;
+    cb->personArr[cb->size].tel = tel;
+    cout << "请输入住址：" << endl;
+    string addr;
+    cin >> addr;
+    cb->personArr[cb->size].addr = addr;
+    cout << "添加成功" << endl;
+    cb->size++;
+    system("pause");
+}
